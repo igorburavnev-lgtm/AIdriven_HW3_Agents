@@ -1,0 +1,6 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Удалить из наблюдений</h2>
+<p>{{ item.share.ticker }}</p>
+<form method="post">{% csrf_token %}<button type="submit">Удалить</button></form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Ценовые уведомления</h2>
+<a href="{% url 'dashboard:alert_add' %}">Создать</a>
+<table>
+<tr><th>Тикер</th><th>Условие</th><th>Целевая</th><th>Активен</th><th>Сработал</th><th>Действие</th></tr>
+{% for alert in alerts %}
+<tr>
+  <td>{{ alert.share.ticker }}</td>
+  <td>{{ alert.condition }}</td>
+  <td>{{ alert.target_price }}</td>
+  <td>{{ alert.is_active }}</td>
+  <td>{{ alert.triggered }}</td>
+  <td><a href="{% url 'dashboard:alert_remove' alert.pk %}">Удалить</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Мои наблюдения</h2>
+<a href="{% url 'dashboard:watchlist_add' %}">Добавить</a>
+<table>
+<tr><th>Тикер</th><th>Название</th><th>Цена</th><th>Действие</th></tr>
+{% for item in items %}
+<tr>
+  <td>{{ item.share.ticker }}</td>
+  <td>{{ item.share.name }}</td>
+  <td>{{ item.share.last_price }}</td>
+  <td><a href="{% url 'dashboard:watchlist_remove' item.pk %}">Удалить</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
