@@ -1,0 +1,11 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Удалить уведомление</h1>
+<p>Вы уверены?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+</form>
+<a href="{% url 'dashboard:alerts' %}">Отмена</a>
+{% endblock %}

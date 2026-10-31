@@ -1,0 +1,11 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Удалить из списка наблюдения</h1>
+<p>Вы уверены, что хотите удалить {{ object.share.ticker }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+</form>
+<a href="{% url 'dashboard:watchlist' %}">Отмена</a>
+{% endblock %}

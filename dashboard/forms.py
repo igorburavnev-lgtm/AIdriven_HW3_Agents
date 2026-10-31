@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Share
+from .models import PriceAlert, Share, Watchlist
 
 
 class ShareModelForm(forms.ModelForm):
@@ -9,3 +9,20 @@ class ShareModelForm(forms.ModelForm):
     class Meta:
         model = Share
         fields = "__all__"
+
+
+class WatchlistForm(forms.ModelForm):
+    """Форма добавления акции в список наблюдения"""
+
+    class Meta:
+        model = Watchlist
+        fields = ("share",)
+
+
+class PriceAlertForm(forms.ModelForm):
+    """Форма создания уведомления о достижении целевой цены"""
+
+    class Meta:
+        model = PriceAlert
+        fields = ("share", "target_price", "condition")
+

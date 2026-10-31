@@ -1,0 +1,37 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Уведомления о ценовых уровнях</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Создать уведомление</button>
+</form>
+<h2>Мои уведомления</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Акция</th>
+            <th>Условие</th>
+            <th>Целевая цена</th>
+            <th>Активно</th>
+            <th>Сработало</th>
+            <th>Время срабатывания</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for alert in alerts %}
+        <tr>
+            <td>{{ alert.share.ticker }}</td>
+            <td>{{ alert.get_condition_display }}</td>
+            <td>{{ alert.target_price }}</td>
+            <td>{{ alert.is_active }}</td>
+            <td>{{ alert.is_triggered }}</td>
+            <td>{{ alert.triggered_at }}</td>
+            <td><a href="{% url 'dashboard:alert_delete' alert.pk %}">Удалить</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

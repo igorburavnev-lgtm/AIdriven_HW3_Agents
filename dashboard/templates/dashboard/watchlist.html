@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Мой список наблюдения</h1>
+<a href="{% url 'dashboard:watchlist_add' %}">Добавить акцию</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Тикер</th>
+            <th>Компания</th>
+            <th>Текущая цена</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+        <tr>
+            <td><a href="{% url 'dashboard:detail' item.share.pk %}">{{ item.share.ticker }}</a></td>
+            <td>{{ item.share.name }}</td>
+            <td>{{ item.share.last_price }}</td>
+            <td><a href="{% url 'dashboard:watchlist_delete' item.pk %}">Удалить</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
