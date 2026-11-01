@@ -1,15 +1,5 @@
 # ANALYSIS.md — анализ проекта «Investing Demo»
 
-> This copy of the project (`agent-cursor-mimic`) was analysed as it looked after the initial import,
-> before tasks #3 and #4. Sections 1–6 describe that original state; sections **7** and **8** describe
-> what I changed and added afterwards.
->
-> I reference code by file and symbol name rather than by line number. Line numbers of the original
-> files no longer match the current tree, because tasks #3–4 rewrote several modules, and a citation
-> that points at the wrong line is worse than no citation at all.
-
----
-
 ## 1. Назначение и технологический стек
 
 `Investing Demo` — учебное Django-приложение, справочник акций Московской биржи с данными из
