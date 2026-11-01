@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, View, UpdateView
+
+from config.settings import logger
 
 from .forms import ShareModelForm
 from .models import Share
 from .services.graph import get_graph
-from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 class IsUserAuthenticatedMixin(UserPassesTestMixin):
@@ -27,14 +29,27 @@ class ShareListView(ListView):
 
 
 class ShareDetailView(View):
+    """Карточка акции"""
+
     @staticmethod
     def get(request, pk):
-        share = Share.objects.get(id=pk)
+        # get() used to raise DoesNotExist -> HTTP 500 for an unknown id.
+        share = get_object_or_404(Share, id=pk)
+
+        try:
+            plot_div = get_graph(share)
+            graph_error = None
+        except Exception as exc:  # noqa: BLE001 - market data outage must not 500 the page
+            logger.error("Failed to build graph for share %s: %s", share.id, exc)
+            plot_div = None
+            graph_error = (
+                "График временно недоступен: не удалось получить данные из Tinkoff Invest API."
+            )
 
         return render(
             request,
             "dashboard/detail.html",
-            {"plot_div": get_graph(share), "share": share},
+            {"plot_div": plot_div, "graph_error": graph_error, "share": share},
         )
 
 
@@ -56,7 +71,7 @@ class ShareUpdateView(IsUserAuthenticatedMixin, UpdateView):
 
 
 class ShareDeleteView(IsUserAuthenticatedMixin, DeleteView):
-    """Удаление задачи"""
+    """Удаление инструмента"""
 
     model = Share
     template_name = "dashboard/delete.html"

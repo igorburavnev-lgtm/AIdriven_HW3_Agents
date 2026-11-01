@@ -4,5 +4,7 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("dashboard.urls")),
-    path("user", include("user.urls")),
+    # Trailing slash for consistency with the other mount points; the resulting
+    # URLs (/user/login/ etc.) are unchanged because user/urls.py uses "login/".
+    path("user/", include("user.urls")),
 ]

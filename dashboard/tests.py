@@ -120,3 +120,54 @@ class DashboardTests(APITestCase):
     def test_share_delete_invalid(self):
         response = self.client.delete("/api/v1/shares/3/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class PreExistingFeatureTests(APITestCase):
+    """Covers behaviour that existed before modernization and must not regress."""
+
+    def setUp(self):
+        self.share = Share.objects.create(
+            figi="BBG000B9XRY4",
+            isin="US0378331005",
+            name="Apple",
+            ticker="AAPL",
+            currency="usd",
+            uid="a9eb4238-eba9-488c-b102-b6140fd08e38",
+            last_price=100.50,
+            is_trend_high=True,
+        )
+
+    def test_index_page_lists_share(self):
+        """The HTML list renders the ticker and the company name."""
+        response = self.client.get(reverse("dashboard:index"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "AAPL")
+        self.assertContains(response, "Apple")
+        self.assertContains(response, "Список акций")
+
+    def test_detail_page_unknown_share_returns_404(self):
+        """An unknown id must be a 404, not the 500 the original view produced."""
+        response = self.client.get(reverse("dashboard:detail", args=[999_999]))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_page_redirects_anonymous_user(self):
+        """CRUD stays behind the auth mixin: anonymous visitors land on the index."""
+        response = self.client.get(reverse("dashboard:create"))
+
+        self.assertRedirects(
+            response,
+            reverse("dashboard:index"),
+            fetch_redirect_response=False,
+        )
+
+    def test_login_page_renders_input_fields(self):
+        """The login template must render <input> tags, not form-field objects."""
+        response = self.client.get(reverse("user:auth"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, 'name="email"')
+        self.assertContains(response, 'type="password"')
+        self.assertNotContains(response, "object at 0x")
+
