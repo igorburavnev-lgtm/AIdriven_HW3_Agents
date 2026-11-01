@@ -1,19 +1,29 @@
 services:
 
   db:
-    image: postgres
+    image: postgres:17-alpine
     restart: always
     environment:
-      POSTGRES_DB: "investing"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-
+      POSTGRES_DB: "${POSTGRES_DB:-investing}"
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
     ports:
       - "5432:5432"
     volumes:
-        - ./:/app
+      # Named volume: the previous `./:/app` mount shadowed the cluster data
+      # directory with the project checkout, so the database was not persistent.
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-investing}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
-    image: redis
+    image: redis:7-alpine
+    restart: always
     ports:
       - "6379:6379"
+
+volumes:
+  pgdata:

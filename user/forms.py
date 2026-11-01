@@ -1,8 +1,14 @@
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from user.models import User
+User = get_user_model()
+
+DUPLICATE_EMAIL_ERROR = (
+    "Данный e-mail уже зарегистрирован! Введите другой e-mail или"
+    " воспользуйтесь формой авторизации."
+)
 
 
 class RegistrationForm(forms.Form):
@@ -28,29 +34,33 @@ class RegistrationForm(forms.Form):
     )
 
     def clean(self):
-        super().clean()
-        email = self.cleaned_data["email"]
-        password1 = self.cleaned_data["password1"]
-        password2 = self.cleaned_data["password2"]
+        cleaned_data = super().clean()
+        # ``.get()`` keeps the form usable when a field failed validation
+        # (the previous ``cleaned_data["email"]`` raised KeyError -> HTTP 500).
+        email = (cleaned_data.get("email") or "").strip().lower()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
         if password1 and password2 and password1 != password2:
-            errors = ["Введенные пароли не совпадают"]
-            raise ValidationError(errors)
+            raise ValidationError("Введенные пароли не совпадают")
 
-        user = User.objects.filter(email=email)
+        if email:
+            if User.objects.filter(email__iexact=email).exists():
+                raise ValidationError(DUPLICATE_EMAIL_ERROR)
 
-        if user:
-            errors = [
-                "Данный e-mail уже зарегистрирован! Введите другой e-mail или"
-                " воспользуйтесь формой авторизации."
-            ]
-            raise ValidationError(errors)
+            if password1:
+                # AUTH_PASSWORD_VALIDATORS are only enforced when asked explicitly,
+                # because this form is a plain forms.Form, not UserCreationForm.
+                validate_password(password1)
+
+        cleaned_data["email"] = email
+        return cleaned_data
 
     def save(self):
         email = self.cleaned_data["email"]
         password = self.cleaned_data["password1"]
-        User.objects.create_user(email, email, password)
-        user = authenticate(username=email, password=password)
-        return user
+        User.objects.create_user(username=email, email=email, password=password)
+        return authenticate(username=email, password=password)
 
 
 class AuthForm(forms.Form):
