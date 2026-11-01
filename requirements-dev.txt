@@ -1,0 +1,6 @@
+# Tooling for development and CI - not needed to run the application.
+-r requirements.txt
+
+black==26.10.1
+isort==9.0.2
+coverage==7.17.0

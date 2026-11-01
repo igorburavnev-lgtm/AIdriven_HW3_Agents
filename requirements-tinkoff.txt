@@ -1,0 +1,12 @@
+# Optional market-data SDK (Tinkoff Invest API).
+#
+# Both `tinkoff` and `tinkoff-investments` are no longer published on PyPI
+# (https://pypi.org/simple/tinkoff-investments/ -> 404) and the upstream
+# repository is archived, so there is no PyPI release to pin. Install from the
+# archived source repository if you need live quotes:
+#
+#   pip install "tinkoff-investments @ git+https://github.com/RussianInvestments/invest-python.git"
+#
+# Only dashboard/services/*, dashboard/management/commands/add_shares.py and the
+# Celery price-refresh task need it; everything else degrades gracefully.
+tinkoff-investments @ git+https://github.com/RussianInvestments/invest-python.git

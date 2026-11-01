@@ -28,3 +28,8 @@ celeryd.pid
 *.log
 .pytest_cache/
 app.logs
+.coverage
+
+# Collected static files and local scratch space
+staticfiles/
+.tmp/

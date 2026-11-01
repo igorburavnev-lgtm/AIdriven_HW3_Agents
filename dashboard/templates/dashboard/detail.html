@@ -6,25 +6,29 @@
 
 {% block content %}
     <div class="row">
-    <div class="col3"></div>
-    <div class="col3">
-        Инструмент: {{ share.name }} <br>
-        Текущая цена: {{ share.last_price }} {{ share.currency }} <br>
-        Время последнего обновления: {{ share.updated_at }}
-    </div>
-    <div class="col3"></div>
+        <div class="col-3"></div>
+        <div class="col-3">
+            Инструмент: {{ share.name }} <br>
+            Текущая цена: {{ share.last_price }} {{ share.currency }} <br>
+            Время последнего обновления: {{ share.updated_at }}
+        </div>
+        <div class="col-3"></div>
     </div>
 
 
-      <div class="row mt-3">
-    <div class="col3"></div>
-    <div class="col3">
-    <h5>Исторические данные: </h5>
- {% autoescape off %}
-  {{ plot_div }}
-  {% endautoescape %}
-    </div>
-    <div class="col3"></div>
+    <div class="row mt-3">
+        <div class="col-3"></div>
+        <div class="col-3">
+            <h5>Исторические данные: </h5>
+            {% if plot_div %}
+                {% autoescape off %}
+                    {{ plot_div }}
+                {% endautoescape %}
+            {% else %}
+                <p class="text-muted">{{ graph_error }}</p>
+            {% endif %}
+        </div>
+        <div class="col-3"></div>
     </div>
 
 
