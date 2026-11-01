@@ -1,0 +1,13 @@
+# Optional market-data SDK (Tinkoff Invest API).
+#
+# Both `tinkoff` and `tinkoff-investments` were removed from PyPI
+# (https://pypi.org/simple/tinkoff-investments/ -> 404) and the upstream
+# repository is archived, so the SDK cannot be pinned to a PyPI release.
+# It can still be installed from the archived source repository:
+#
+#   pip install "tinkoff-investments @ git+https://github.com/RussianInvestments/invest-python.git"
+#
+# The application imports this SDK lazily (see dashboard/services/*), so the
+# web UI, the REST API and the test suite work without it; only live calls to
+# the Tinkoff API (share import, price refresh, price chart) require it.
+tinkoff-investments @ git+https://github.com/RussianInvestments/invest-python.git
